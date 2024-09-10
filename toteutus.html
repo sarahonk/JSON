@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurssin toteutus</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Navigaatiopalkki -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Etusivu</a></li>
+            <li><a href="toteutus.html">Toteutus</a></li>
+        </ul>
+    </nav>
+
+    <!-- Kurssin tietopalkki -->
+    <section id="course-details">
+        <h1>Kurssin toteutuksen tiedot</h1>
+        <div id="course-name"></div>
+        <div id="participants-count"></div>
+        <div id="participants"></div>
+        <div id="course-dates"></div>
+        <div id="course-duration"></div>
+        <img id="course-image" src="" alt="Kurssin kuva">
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Hae JSON-tiedot Mocky-palvelimelta
+            fetch('https://run.mocky.io/v3/ef4e1f76-835c-41ac-bd51-2dbf2427991a')
+                .then(response => response.json())
+                .then(data => {
+                    // Näytä tiedot HTML-sivulla
+                    document.getElementById('course-name').innerHTML = `<h2>${data.toteutus.nimi}</h2>`;
+                    document.getElementById('participants-count').innerHTML = `Osallistujia: ${data.toteutus.osallistujien_lukumäärä}`;
+                    document.getElementById('participants').innerHTML = `Osallistujat: ${data.toteutus.osallistujat.join(", ")}`;
+                    document.getElementById('course-dates').innerHTML = `Alkaa: ${data.toteutus.alkamisaika} | Loppuu: ${data.toteutus.loppumisaika}`;
+                    document.getElementById('course-duration').innerHTML = `Kesto: ${data.toteutus.kesto_viikkoina} viikkoa`;
+                    document.getElementById('course-image').src = data.toteutus.kuva;
+                })
+                .catch(error => console.error('Virhe JSON-datan lataamisessa:', error));
+        });
+    </script>
+
+</body>
+</html>
