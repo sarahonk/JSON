@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sää</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Navigaatiopalkki -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Etusivu</a></li>
+            <li><a href="tapahtumat.html">Tapahtumat</a></li>
+            <li><a href="saa.html">Sää</a></li>
+            <li><a href="toteutus.html">Toteutus</a></li>
+        </ul>
+    </nav>
+
+    <!-- Säätietojen näyttöalue -->
+    <div id="vastaus"></div>
+
+    <script>
+        const apiKey = '665ecd56dfc08dbb50feb8b8f5034e28'; 
+        const helsinkiUrl = `https://api.openweathermap.org/data/2.5/weather?q=Helsinki&appid=${apiKey}&units=metric&lang=fi`;
+        const tampereUrl = `https://api.openweathermap.org/data/2.5/weather?q=Tampere&appid=${apiKey}&units=metric&lang=fi`;
+
+        // Hae säätiedot Helsingille
+        fetch(helsinkiUrl)
+            .then(response => response.json())
+            .then(data => {
+                saa(data, "Helsinki");
+            })
+            .catch(error => {
+                document.getElementById("vastaus").innerHTML += "<p>Tietoa ei pystytä hakemaan Helsingin säätiedoille</p>";
+            });
+
+        // Hae säätiedot Tampereelle
+        fetch(tampereUrl)
+            .then(response => response.json())
+            .then(data => {
+                saa(data, "Tampere");
+            })
+            .catch(error => {
+                document.getElementById("vastaus").innerHTML += "<p>Tietoa ei pystytä hakemaan Tampereen säätiedoille</p>";
+            });
+
+        function saa(data, kaupunki) {
+            let teksti = "<h1>" + kaupunki + "</h1>";
+            
+            // Säätilan kuvaus ja lämpötila
+            teksti += "<p>Säätila: " + data.weather[0].description + "</p>";
+            teksti += "<p>Lämpötila: " + data.main.temp + " &deg;C</p>";
+            teksti += "<p>Tuulen nopeus: " + data.wind.speed + " m/s</p>";
+
+            // Sääkuva
+            const iconCode = data.weather[0].icon; 
+            const kuva = `http://openweathermap.org/img/wn/${iconCode}@2x.png`;
+            teksti += "<p><img src='http://openweathermap.org/img/wn/10d@2x.png' alt='Sääkuva'></p>";
+            document.getElementById("vastaus").innerHTML += teksti;
+        }
+    </script>
+
+</body>
+</html>

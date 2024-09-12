@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tapahtumat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Navigaatiopalkki -->
+    <nav>
+        <ul>
+            <li><a href="index.html">Etusivu</a></li>
+            <li><a href="tapahtumat.html">Tapahtumat</a></li>
+            <li><a href="saa.html">Sää</a></li>
+            <li><a href="toteutus.html">Toteutus</a></li>
+        </ul>
+    </nav>
+
+    <!-- Tapahtumatiedot näytetään tähän -->
+    <div id="vastaus"></div>
+
+    <script>
+        // API-endpointin URL
+        const tapahtumatUrl = 'https://api.visittampere.com/api/v1/visittampere/event/published/all/?format=json&lang=fi';
+
+        // Haetaan tapahtumat fetchillä
+        fetch(tapahtumatUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Verkkovirhe: ' + response.status);
+                }
+                return response.json(); 
+            })
+            .then(responseJson => {
+                console.log(responseJson);
+                const events = Array.isArray(responseJson) ? responseJson : [];
+
+                if (events && events.length > 0) {
+                    tapahtumat(events); 
+                } else {
+                    document.getElementById("vastaus").innerHTML = "<p>Tapahtumia ei löytynyt.</p>";
+                }
+            })
+            .catch(error => {
+                document.getElementById("vastaus").innerHTML = "<p>Tietoa ei pystytä hakemaan: " + error.message + "</p>";
+            });
+
+        // Funktio tapahtumien käsittelyyn
+        function tapahtumat(data) {
+            let teksti = "<h1>Tampereella tapahtuu</h1>";
+
+            data.forEach(event => {
+                console.log(event);
+
+                // Tapahtumien yksityiskohdat
+                let nimi = event.title || "Nimeä ei saatavilla";
+                let kuvaus = event.description || "Kuvausta ei saatavilla";
+                let url = event.url || "#";
+                let kuva = event.images?.[0]?.url || "";
+
+                teksti += `<h3>${nimi}</h3>`;
+                teksti += `<p>${kuvaus}</p>`;
+                if (kuva) {
+                    teksti += `<img src="${kuva}" alt="${nimi}" class="event-image">`;
+                }
+                teksti += `<p><a href="${url}" target="_blank">Lisätietoja</a></p>`;
+            });
+
+            document.getElementById("vastaus").innerHTML = teksti;
+        }
+    </script>
+
+</body>
+</html>
